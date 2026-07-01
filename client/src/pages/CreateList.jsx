@@ -38,6 +38,14 @@ export default function CreateList() {
     },
   })
 
+  const saveMutation = useMutation({
+    mutationFn: (data) => api.put(`/lists/${id}`, data),
+    onSuccess: (r) => {
+      queryClient.invalidateQueries({ queryKey: ["lists"] })
+      navigate("/")
+    },
+  })
+
   const addItemMutation = useMutation({
     mutationFn: ({ listId, movie }) => api.post(`/lists/${listId}/items`, movie),
   })
@@ -49,7 +57,11 @@ export default function CreateList() {
   const handleCreate = async (e) => {
     e.preventDefault()
     if (!user) return navigate("/login")
-    createMutation.mutate({ title, description })
+    if (!isEdit) {
+      createMutation.mutate({ title, description })
+    } else {
+      saveMutation.mutate({ title, description })
+    }
   }
 
   const handleAddMovie = async (movie) => {
@@ -93,7 +105,16 @@ export default function CreateList() {
       <form onSubmit={handleCreate} className="mb-6 flex flex-col gap-4">
         <input className="rounded border px-3 py-2" placeholder="Title" value={title} onChange={(e) => setTitle(e.target.value)} required />
         <textarea className="rounded border px-3 py-2" placeholder="Description (optional)" value={description} onChange={(e) => setDescription(e.target.value)} rows={3} />
-        {!isEdit && <button className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700" type="submit">Create List</button>}
+        {!isEdit ? 
+          <div className="flex gap-2">
+            <button className="flex-1 cursor-pointer rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700" type="submit">Create List</button>
+            <button type="button" onClick={() => navigate(`/users/${user.id}`)} className="cursor-pointer rounded border px-4 py-2 text-gray-600 hover:bg-gray-100">Cancel</button>
+          </div>
+        : <div className="flex gap-2">
+            <button className="flex-1 cursor-pointer rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700" type="submit">Save List</button>
+            <button type="button" onClick={() => navigate(`/users/${user.id}`)} className="cursor-pointer rounded border px-4 py-2 text-gray-600 hover:bg-gray-100">Cancel</button>
+          </div>
+        }
       </form>
 
       {isEdit && (

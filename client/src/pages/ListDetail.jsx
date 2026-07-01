@@ -25,7 +25,7 @@ export default function ListDetail() {
           <h1 className="text-3xl font-bold">{list.title}</h1>
           {list.description && <p className="mt-2 text-gray-600">{list.description}</p>}
           <div className="mt-2 flex items-center gap-4 text-sm text-gray-500">
-            <span>by {list.creator_name}</span>
+            <span>by <Link to={`/users/${list.user_id}`} className="text-blue-600 hover:underline">{list.creator_name}</Link></span>
             <span>{list.item_count} movies</span>
           </div>
         </div>

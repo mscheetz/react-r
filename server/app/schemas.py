@@ -28,6 +28,12 @@ class UserOut(BaseModel):
     model_config = {"from_attributes": True}
 
 
+class UserDetailOut(UserOut):
+    list_count: int = 0
+    avg_rating: float = 0.0
+    rating_count: int = 0
+
+
 class MovieSearchResult(BaseModel):
     tmdb_id: int
     title: str

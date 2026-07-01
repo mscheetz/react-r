@@ -11,7 +11,7 @@ export default function Navbar() {
         {user ? (
           <>
             <Link to="/lists/new" className="rounded bg-blue-600 px-3 py-1.5 text-sm text-white hover:bg-blue-700">+ New List</Link>
-            <span className="text-sm text-gray-600">{user.display_name}</span>
+            <Link to={`/users/${user.id}`} className="text-sm text-gray-600 hover:text-gray-800">{user.display_name}</Link>
             <button onClick={logout} className="text-sm text-gray-500 hover:text-gray-700">Sign out</button>
           </>
         ) : (

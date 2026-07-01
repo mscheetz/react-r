@@ -6,6 +6,7 @@ import Home from './pages/Home'
 import CreateList from './pages/CreateList'
 import ListDetail from './pages/ListDetail'
 import NotFound from './pages/NotFound'
+import UserDetail from './pages/UserDetail'
 
 export default function App() {
   return (
@@ -19,6 +20,7 @@ export default function App() {
           <Route path="/lists/new" element={<CreateList />} />
           <Route path="/lists/:id" element={<ListDetail />} />
           <Route path="/lists/:id/edit" element={<CreateList />} />
+          <Route path="/users/:id" element={<UserDetail />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>

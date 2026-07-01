@@ -16,15 +16,15 @@ export default function Home() {
       {lists.length === 0 && <p className="text-gray-500">No lists yet.</p>}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {lists.map((list) => (
-          <Link key={list.id} to={`/lists/${list.id}`} className="block rounded-lg border bg-white p-4 shadow-sm hover:shadow-md">
-            <h2 className="text-lg font-semibold">{list.title}</h2>
+          <div key={list.id} className="rounded-lg border bg-white p-4 shadow-sm hover:shadow-md">
+            <Link to={`/lists/${list.id}`} className="text-lg font-semibold hover:text-blue-600">{list.title}</Link>
             {list.description && <p className="mt-1 text-sm text-gray-600 line-clamp-2">{list.description}</p>}
             <div className="mt-3 flex items-center gap-3 text-xs text-gray-500">
-              <span>by {list.creator_name}</span>
+              <span>by <Link to={`/users/${list.user_id}`} className="text-blue-600 hover:underline">{list.creator_name}</Link></span>
               <span>{list.item_count} movies</span>
               {list.rating_count > 0 && <span>★ {list.avg_rating.toFixed(1)} ({list.rating_count})</span>}
             </div>
-          </Link>
+          </div>
         ))}
       </div>
     </div>

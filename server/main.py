@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.db import async_session, engine
 from app.models import Base
-from app.routes import auth, lists, movies
+from app.routes import auth, lists, movies, users
 
 
 @asynccontextmanager
@@ -29,6 +29,7 @@ app.add_middleware(
 app.include_router(auth.router)
 app.include_router(lists.router)
 app.include_router(movies.router)
+app.include_router(users.router)
 
 
 @app.get("/api/hello")
