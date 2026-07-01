@@ -1,0 +1,15 @@
+{
+  "private": true,
+  "scripts": {
+    "client": "cd client && npm run dev",
+    "server": "cd server && uv run python -m uvicorn main:app --reload",
+    "dev": "concurrently -n CLIENT,SERVER \"npm run client\" \"npm run server\""
+  },
+  "devDependencies": {
+    "concurrently": "^10.0.3"
+  },
+  "dependencies": {
+    "@tailwindcss/vite": "^4.3.2",
+    "tailwindcss": "^4.3.2"
+  }
+}
