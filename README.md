@@ -1,4 +1,4 @@
-# React-R Movie Lists
+# React-r Movie Lists
 
 React + FastAPI + PostgreSQL movie list site. TMDB-powered movie search, user auth, ratings, comments, favorites.
 
