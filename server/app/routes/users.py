@@ -84,3 +84,38 @@ async def get_user_lists(
         )
         for r in rows
     ]
+
+@router.post("/{user_id}/favorite/{list_id}", response_model=bool)
+async def toggle_favorite(
+    user_id: int,
+    list_id: int,
+    db: AsyncSession = Depends(get_db),
+):
+    u_result = await db.execute(select(User).where(User.id == user_id))
+    user = u_result.scalar_one_or_none()
+
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+
+    l_result = await db.execute(select(MovieList).where(MovieList.id == list_id))
+    ml = l_result.scalar_one_or_none()
+
+    if not ml:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="List not found")
+
+    existing = await db.execute(
+        select(FavoriteList).where(FavoriteList.user_id == user_id, FavoriteList.list_id == list_id)
+    )
+
+    favorite = existing.scalar_one_or_none()
+    favorite_status = False
+    if favorite:
+        await db.delete(favorite)
+    else:
+        favorite = FavoriteList(user_id=user_id, list_id=list_id)
+        db.add(favorite)
+        favorite_status = True
+
+    await db.commit()
+
+    return favorite_status

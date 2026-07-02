@@ -59,6 +59,7 @@ class ListUpdate(BaseModel):
 class ListOut(BaseModel):
     id: int
     user_id: int
+    creator_id: int = 0
     title: str
     description: str
     created_at: datetime
@@ -73,6 +74,7 @@ class ListOut(BaseModel):
 
 class ListDetail(ListOut):
     items: list["ListItemOut"] = []
+    is_favorited: bool = False
 
     model_config = {"from_attributes": True}
 

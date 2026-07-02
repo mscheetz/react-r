@@ -79,3 +79,11 @@ class Comment(Base):
 
     list = relationship("MovieList", back_populates="comments")
     user = relationship("User", back_populates="comments")
+
+class FavoriteList(Base):
+    __tablename__ = "favorite_lists"
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    list_id: Mapped[int] = mapped_column(ForeignKey("lists.id"), nullable=False)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(default=datetime.now)
+

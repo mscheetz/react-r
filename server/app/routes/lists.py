@@ -5,9 +5,9 @@ from sqlalchemy import func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import contains_eager, joinedload
 
-from app.auth import get_current_user
+from app.auth import get_current_user, get_optional_user
 from app.db import get_db
-from app.models import Comment, ListItem, MovieList, Rating, User
+from app.models import Comment, FavoriteList, ListItem, MovieList, Rating, User
 from app.schemas import (
     CommentCreate,
     CommentOut,
@@ -85,7 +85,11 @@ async def create_list(
 
 
 @router.get("/{list_id}", response_model=ListDetail)
-async def get_list(list_id: int, db: AsyncSession = Depends(get_db)):
+async def get_list(
+    list_id: int,
+    db: AsyncSession = Depends(get_db),
+    current_user: User | None = Depends(get_optional_user),
+):
     stmt = (
         select(MovieList)
         .options(contains_eager(MovieList.creator))
@@ -120,7 +124,15 @@ async def get_list(list_id: int, db: AsyncSession = Depends(get_db)):
         rating_count=row[2],
         item_count=row[3],
         items=[ListItemOut.model_validate(i) for i in ml.items],
+        is_favorited=False,
     )
+    if current_user:
+        fav = await db.execute(
+            select(FavoriteList).where(
+                FavoriteList.list_id == list_id, FavoriteList.user_id == current_user.id
+            )
+        )
+        detail.is_favorited = fav.scalar_one_or_none() is not None
     return detail
 
 
@@ -275,6 +287,31 @@ async def rate_list(
 
     await db.commit()
     return body
+
+
+@router.post("/{list_id}/favorite")
+async def toggle_favorite(
+    list_id: int,
+    user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    result = await db.execute(select(MovieList).where(MovieList.id == list_id))
+    if not result.scalar_one_or_none():
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="List not found")
+
+    existing = await db.execute(
+        select(FavoriteList).where(
+            FavoriteList.list_id == list_id, FavoriteList.user_id == user.id
+        )
+    )
+    fav = existing.scalar_one_or_none()
+    if fav:
+        await db.delete(fav)
+        await db.commit()
+        return {"favorited": False}
+    db.add(FavoriteList(list_id=list_id, user_id=user.id))
+    await db.commit()
+    return {"favorited": True}
 
 
 @router.get("/{list_id}/comments", response_model=list[CommentOut])
