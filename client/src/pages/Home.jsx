@@ -12,7 +12,7 @@ export default function Home() {
 
   return (
     <div>
-      <h1 className="mb-6 text-3xl font-bold">Movie Lists</h1>
+      <h1 className="mb-6 text-3xl font-bold">React-r Movie Lists</h1>
       {lists.length === 0 && <p className="text-gray-500">No lists yet.</p>}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {lists.map((list) => (
